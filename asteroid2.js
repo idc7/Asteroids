@@ -105,9 +105,9 @@ function Asteroid(sLeft,sx,sy,lx,ly){
 //            objList.push(new Asteroid(this.splitLeft - 1, this.speedX - 3, this.speedY - 3, this.locX - 3, this.locY - 3));
 //            objList.push(new Asteroid(this.splitLeft - 1, this.speedX - 3, this.speedY + 3, this.locX - 3, this.locY + 3));
 //            objList.push(new Asteroid(this.splitLeft - 1, this.speedX + 3, this.speedY - 3, this.locX + 3, this.locY - 3));
-            objList.push(new Asteroid(this.splitLeft - 1, this.speedX + gRI(-7, 8), this.speedY - gRI(-7, 8), this.locX + gRI(-7, 8), this.locY - gRI(-7, 8)));
-            objList.push(new Asteroid(this.splitLeft - 1, this.speedX + gRI(-7, 8), this.speedY - gRI(-7, 8), this.locX + gRI(-7, 8), this.locY - gRI(-7, 8)));
-            objList.push(new Asteroid(this.splitLeft - 1, this.speedX + gRI(-7, 8), this.speedY - gRI(-7, 8), this.locX + gRI(-7, 8), this.locY - gRI(-7, 8)));
+            objList.push(new Asteroid(this.splitLeft - 1, this.speedX + gRI(-1, 5), this.speedY - gRI(-1, 5), this.locX + gRI(-1, 5), this.locY - gRI(-1, 5)));
+            objList.push(new Asteroid(this.splitLeft - 1, this.speedX + gRI(-3, 4), this.speedY - gRI(-3, 4), this.locX + gRI(-3, 4), this.locY - gRI(-3, 4)));
+            objList.push(new Asteroid(this.splitLeft - 1, this.speedX + gRI(-5, 1), this.speedY - gRI(-5, 1), this.locX + gRI(-5, 1), this.locY - gRI(-5, 1)));
          }
       }gRI(-7, 8)
    };
@@ -171,7 +171,8 @@ function Ship(){
          this.lifeCounter -= 1;}
       if(this.lifeCounter < 1){
          this.isDead = true;
-         clearInterval(this.gameTimer);}// triger game over here... somehow //GO: stop timer, show score, give playagain option //pass GO function earlyer and then call it now?
+         clearInterval(this.gameTimer);
+         this.gameTimer = null;}// triger game over here... somehow //GO: stop timer, show score, give playagain option //pass GO function earlyer and then call it now?
    };
    this.fire = function(spaceObjList){
       var plx = this.locX + Math.sin(this.direction) * this.radi;
@@ -270,7 +271,15 @@ function Pellet(sx, sy, lx, ly){
 
 
 
+var reset = function(ctx, canva, moveList){
+   moveList.push(new Ship());
+   for(var i = 1; i < 11; i++){
+      moveList.push(new Asteroid(3, gRI(-3, 3), gRI(-3, 3), gRI(5, 495), gRI(5, 495)))};
+   ctx.fillStyle = "#000000";
+   ctx.fillRect(0, 0, canva.width, canva.height);
+   moveList[0].gameTimer = gameClock(17, moveList, ctx);
 
+};
 
 
 
@@ -280,22 +289,12 @@ $(document).ready(function(){
 //   Pellet.inherits(SpaceObj);
 
 
-   var moveList = [new Ship()];
-   for(var i = 1; i < 11; i++){
-      moveList.push(new Asteroid(3, gRI(-5, 6), gRI(-5, 6), gRI(5, 495), gRI(5, 495)))};
-
+   var moveList = [];
    var canva = document.getElementById('mainCanvas');
    canva.height = 500;
    canva.width = 500;
    var ctx = canva.getContext("2d");
-   ctx.fillStyle = "#000000";
-   ctx.fillRect(0, 0, canva.width, canva.height);
-
-
-   
-
-
-   moveList[0].gameTimer = gameClock(80, moveList, ctx);
+   reset(ctx, canva, moveList);
 
 
 
@@ -326,6 +325,14 @@ $(document).ready(function(){
          default: return; 
       }
       e.preventDefault(); 
+   });
+
+   
+   $('#reset').click(function(){
+      if(moveList[0].gameTimer != null){
+         clearInterval(moveList[0].gameTimer);}
+      moveList = [];
+      reset(ctx, canva, moveList);
    });
 
 });
